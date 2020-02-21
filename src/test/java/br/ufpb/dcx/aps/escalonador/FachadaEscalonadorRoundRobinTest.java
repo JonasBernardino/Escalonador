@@ -16,7 +16,7 @@ public class FachadaEscalonadorRoundRobinTest {
 	}
 
 	@Test
-	public void t01_statusAposCriacao() {
+	public void t01_statusAposCriacao() { 
 		checaStatus(fachada, TipoEscalonador.RoundRobin, 3, 0);
 	}
 

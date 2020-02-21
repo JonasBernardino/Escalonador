@@ -7,9 +7,9 @@ import org.junit.jupiter.api.*;
 
 public class FachadaEscalonadorMaisCurtoPrimeiroTest {
 	
-	private FachadaEscalonador fachada;
+	private FachadaEscalonador fachada; 
 	
-	@BeforeEach
+	@BeforeEach 
 	public void inicializar() {
 		fachada = new FachadaEscalonador(TipoEscalonador.MaisCurtoPrimeiro);
 	}
@@ -135,7 +135,7 @@ public class FachadaEscalonadorMaisCurtoPrimeiroTest {
 	public void t08_tresProcessosAdicionarMenorNoMeio() {
 		fachada.adicionarProcessoTempoFixo("P1", 2);
 
-		fachada.tick();
+		fachada.tick(); 
 		checaStatusRodando(fachada, TipoEscalonador.MaisCurtoPrimeiro, 0, 1, "P1");
 
 		fachada.adicionarProcessoTempoFixo("P2", 1);

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FachadaEscalonador {
- 
+	
 	private Escalonador escalonador = new Escalonador();
 
 	public FachadaEscalonador(TipoEscalonador tipoEscalonador) {
@@ -12,32 +12,39 @@ public class FachadaEscalonador {
 			throw new EscalonadorException();
 		}
 		if (tipoEscalonador.equals(escalonador.escalonadorRoundRobin())) {
-			escalonador = new EscalonadorRoundRobin(tipoEscalonador);}
-		
-	} 
-	 
-	public FachadaEscalonador(TipoEscalonador roundrobin, int quantum) {
-		escalonador = new EscalonadorRoundRobin(quantum);
-		
+			escalonador = new EscalonadorRoundRobin(tipoEscalonador);
+		} else if (tipoEscalonador.equals(escalonador.escalonadorPrioridade())) {
+			escalonador = new EscalonadorPrioridade(tipoEscalonador);
+		} else {
+			escalonador = new EscalonadorMaisCurtoPrimeiro(tipoEscalonador);
+		}
+	}
+
+	public FachadaEscalonador(TipoEscalonador tipoEscalonador, int quantum) {
+		if (tipoEscalonador.equals(escalonador.escalonadorRoundRobin())) {
+			escalonador = new EscalonadorRoundRobin(quantum);
+		}else if (tipoEscalonador.equals(escalonador.escalonadorPrioridade())) {
+			escalonador = new EscalonadorPrioridade(quantum);
+		} else {
+			escalonador = new EscalonadorMaisCurtoPrimeiro(0);
+		}
 	}
 
 	public String getStatus() {
 		return escalonador.getStatus();
-
 	}
 
 	public void tick() {
 		escalonador.tick();
-		
-
 	}
 
 	public void adicionarProcesso(String nomeProcesso) {
 		escalonador.adicionarProcesso(nomeProcesso);
-		
+
 	}
 
 	public void adicionarProcesso(String nomeProcesso, int prioridade) {
+		escalonador.adicionarProcesso(nomeProcesso, prioridade);
 	}
 
 	public void finalizarProcesso(String nomeProcesso) {
@@ -50,10 +57,9 @@ public class FachadaEscalonador {
 
 	public void retomarProcesso(String nomeProcesso) {
 		escalonador.retomarProcesso(nomeProcesso);
-
 	}
 
-	public void adicionarProcessoTempoFixo(String string, int duracao) {
-
+	public void adicionarProcessoTempoFixo(String nomeProcesso, int duracao) {
+		escalonador.adicionarProcessoTempoFixo(nomeProcesso, duracao);
 	}
 }
