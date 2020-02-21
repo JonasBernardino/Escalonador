@@ -20,7 +20,7 @@ public class FachadaEscalonadorPrioridadeTest {
 	}
 
    	@Test
-	public void t02_avancarTempo() {
+	public void t02_avancarTempo() { 
 		fachada.tick();
 		checaStatus(fachada, TipoEscalonador.Prioridade, 3, 1);
 	}

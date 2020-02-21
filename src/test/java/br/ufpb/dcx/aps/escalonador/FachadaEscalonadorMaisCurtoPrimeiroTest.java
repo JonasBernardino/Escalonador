@@ -14,7 +14,7 @@ public class FachadaEscalonadorMaisCurtoPrimeiroTest {
 		fachada = new FachadaEscalonador(TipoEscalonador.MaisCurtoPrimeiro);
 	}
 
-    @Test
+    @Test  
 	public void t01_statusAposCriacao() {
 		checaStatus(fachada, TipoEscalonador.MaisCurtoPrimeiro, 0, 0);
 	}

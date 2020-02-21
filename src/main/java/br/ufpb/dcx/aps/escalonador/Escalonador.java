@@ -1,88 +1,234 @@
 package br.ufpb.dcx.aps.escalonador;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 public class Escalonador {
 
 	private StatusEscalonador status = new StatusEscalonador();
-	private TipoEscalonador tipo;
-	
-
-	private int tick;
+	private TipoEscalonador tipoEscalonador;
 	private int quantum = 3;
-	private String processoAtual;
-	
-	// Listas
-	private List<String> listaProcessos = new ArrayList<String>();
-	private List<String> processosRodando = new ArrayList<String>();
-	
+	private int tick = 0;
+	private int valorAternar = 1;
+	private String rodando;
+
+	private Queue<String> filaAternado = new LinkedList<>();
+	private List<String> bloqueados = new ArrayList<String>();
+
+	private List<String> processosFinalizar = new ArrayList<String>();
+	private List<String> processosBloquear = new ArrayList<String>();
+	private List<String> processosRetornar = new ArrayList<String>();
+
+	private List<Integer> prioridades = new ArrayList<>();
+
 	public Escalonador() {
-		
 	}
-	
+
 	public Escalonador(TipoEscalonador tipo) {
-		this.tipo = tipo;
+		this.tipoEscalonador = tipo;
 	}
 
 	public Escalonador(TipoEscalonador escalonador, int quantum) {
-		this.tipo = escalonador;
+		this.tipoEscalonador = escalonador;
 		this.quantum = quantum;
+		if (quantum <= 0) {
+			throw new EscalonadorException();
+		}
 	}
 
-
-
 	public String getStatus() {
-		if (listaProcessos.size() != 0 && tick == 0) {
-			return status.checaStatusFila(tipo, listaProcessos, quantum, tick);
+
+		if (rodando == null && filaAternado.size() == 0) {
+			if (bloqueados.size() == 0) {
+				return status.statusInicial(tipoEscalonador, quantum, tick);
+			} else {
+				return status.statusBloqueados(tipoEscalonador, bloqueados, quantum, tick);
+			}
 		}
-		//Teste 4
-		if(this.tick == 4) {
-			processosRodando.remove(0);
-			listaProcessos.remove(0);
-			status.checaStatusFila(tipo, listaProcessos, quantum, tick);
-			return status.checaStatusRodando(tipo, processoAtual, quantum, tick);
-			
+		if (rodando == null && filaAternado.size() > 0) {
+			return status.statusFila(tipoEscalonador, filaAternado, quantum, tick);
 		}
-		// teste 3
-		if (processosRodando.size() != 0 ) {
-			return status.checaStatusRodando(tipo, processoAtual, quantum, tick);
+		if (tick > 0 && filaAternado.size() == 0) {
+			if (bloqueados.size() == 0) {
+				return status.statusRodando(tipoEscalonador, rodando, quantum, tick);
+			} else {
+				return status.statusRodandoBloqueados(tipoEscalonador, rodando, bloqueados, quantum, tick);
+			}
 		}
-		
-		
-		//teste 1
-		return status.statusInicial(tipo, quantum, tick);
-		
+		if (bloqueados.size() > 0) {
+			return status.statusRodandoFilaBloqueados(tipoEscalonador, rodando, filaAternado, bloqueados, quantum, tick);
+		}
+		return status.statusProcessoRodandoFila(tipoEscalonador, rodando, filaAternado, quantum, tick);
 	}
 
 	public void tick() {
-	//teste 2
+
 		tick++;
+
+		if (rodando == null) {
+			rodando = filaAternado.poll();
+		}
+
+		finalizandoProcesso();
+
+		verificarAlternancia();
+
+		bloqueandoProcesso();
+
+		retomandoProcesso();
 	}
- 
+
+	protected void retomandoProcesso() {
+		if (processosRetornar.size() > 0) {
+			if (bloqueados.size() <= 1) {
+				for (int i = 0; i < bloqueados.size(); i++) {
+					filaAternado.add(bloqueados.remove(i));
+				}
+			} else {
+				for (int i = 0; i < processosRetornar.size(); i++) {
+					filaAternado.add(processosRetornar.get(i));
+					for (int j = 0; j < bloqueados.size(); j++) {
+						if (bloqueados.get(j).equals(processosRetornar.get(i))) {
+							bloqueados.remove(j);
+						}
+					}
+				}
+			}
+			processosRetornar.clear();
+			if (rodando == null) {
+				rodando = filaAternado.poll();
+				valorAternar = tick;
+			}
+		}
+	}
+
+	protected void bloqueandoProcesso() {
+		if (processosBloquear.size() > 0) {
+			for (int i = 0; i < processosBloquear.size(); i++) {
+				bloqueados.add(processosBloquear.get(i));
+			}
+			rodando = filaAternado.poll();
+			processosBloquear.clear();
+		}
+	}
+
+	protected void verificarAlternancia() {
+		if (rodando != null && filaAternado.size() > 0) {
+			if ((valorAternar + quantum) == tick) {
+				valorAternar = tick;
+				filaAternado.add(rodando);
+				rodando = filaAternado.poll();
+			}
+		}
+	}
+
+	protected void finalizandoProcesso() {
+		if (processosFinalizar.size() > 0) {
+
+			if (filaAternado.size() == 0) {
+				rodando = null;
+			}
+			if (filaAternado.size() >= 1) {
+				for (int i = 0; i < filaAternado.size(); i++) {
+					if (filaAternado.contains(processosFinalizar.get(0))) {
+						filaAternado.poll();
+					}
+				}
+			}
+			if (filaAternado.size() > 0 && rodando == null) {
+				rodando = filaAternado.poll();
+				valorAternar = tick;
+			}
+
+			for (int i = 0; i < processosFinalizar.size(); i++) {
+				if (processosFinalizar.get(i).equals(rodando)) {
+					rodando = filaAternado.poll();
+					valorAternar = tick;
+				}
+			}
+			processosFinalizar.clear();
+		}
+	}
+
 	public void adicionarProcesso(String nomeProcesso) {
-		listaProcessos.add(nomeProcesso);
-		processosRodando.add(nomeProcesso);
-		processoAtual = processosRodando.get(0);
+		if (filaAternado.contains(nomeProcesso) || nomeProcesso == null) {
+			throw new EscalonadorException();
+		}
+		if (tipoEscalonador.equals(escalonadorRoundRobin())) {
+			filaAternado.add(nomeProcesso);
+			if (tick > 0) {
+				valorAternar = tick + 1;
+			}
+		} else {
+			throw new EscalonadorException();
+		}
 	}
 
 	public void adicionarProcesso(String nomeProcesso, int prioridade) {
+		if (filaAternado.contains(nomeProcesso) || nomeProcesso == null || prioridade > 4) {
+			throw new EscalonadorException();
+		}
+		if (tipoEscalonador.equals(escalonadorRoundRobin())) {
+			throw new EscalonadorException();
+		} else {
+			filaAternado.add(nomeProcesso);
+			prioridades.add(prioridade);
+			if (tick > 0) {
+				valorAternar = tick + 1;
+			}
+		}
 	}
 
 	public void finalizarProcesso(String nomeProcesso) {
-		
+		if (filaAternado.contains(nomeProcesso) || nomeProcesso.equals(rodando)) {
+			if (rodando == nomeProcesso) {
+				processosFinalizar.add(nomeProcesso);
+			} else {
+				finalizarProcessoEsperando(nomeProcesso);
+			}
+		} else {
+			throw new EscalonadorException();
+		}
+
+	}
+
+	protected void finalizarProcessoEsperando(String nomeProcesso) {
+		if (!filaAternado.isEmpty()) {
+			for (int i = 0; i < filaAternado.size(); i++) {
+				if (filaAternado.contains(nomeProcesso) && processosFinalizar.size() == 0) {
+					processosFinalizar.add(nomeProcesso);
+				} else {
+					if (!processosFinalizar.contains(nomeProcesso)) {
+						processosFinalizar.add(nomeProcesso);
+					}
+				}
+			}
+		}
 	}
 
 	public void bloquearProcesso(String nomeProcesso) {
+		if (nomeProcesso != rodando) {
+			throw new EscalonadorException();
+		}
+		if (filaAternado.contains(nomeProcesso) || rodando == nomeProcesso) {
+			processosBloquear.add(nomeProcesso);
+		} else {
+			throw new EscalonadorException();
+		}
 	}
 
 	public void retomarProcesso(String nomeProcesso) {
-
+		if (bloqueados.contains(nomeProcesso)) {
+			processosRetornar.add(nomeProcesso);
+		} else {
+			throw new EscalonadorException();
+		}
 	}
 
-	public void adicionarProcessoTempoFixo(String string, int duracao) {
-
+	public TipoEscalonador escalonadorRoundRobin() {
+		return TipoEscalonador.RoundRobin;
 	}
+
 }
-
-

@@ -4,15 +4,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FachadaEscalonador {
-
+ 
 	private Escalonador escalonador = new Escalonador();
 
 	public FachadaEscalonador(TipoEscalonador tipoEscalonador) {
-		escalonador = new EscalonadorRoundRobin(tipoEscalonador);
+		if (tipoEscalonador == null) {
+			throw new EscalonadorException();
+		}
+		if (tipoEscalonador.equals(escalonador.escalonadorRoundRobin())) {
+			escalonador = new EscalonadorRoundRobin(tipoEscalonador);}
 		
-	}
-	
-	
+	} 
+	 
 	public FachadaEscalonador(TipoEscalonador roundrobin, int quantum) {
 		escalonador = new EscalonadorRoundRobin(quantum);
 		
@@ -38,13 +41,15 @@ public class FachadaEscalonador {
 	}
 
 	public void finalizarProcesso(String nomeProcesso) {
-
+		escalonador.finalizarProcesso(nomeProcesso);
 	}
 
 	public void bloquearProcesso(String nomeProcesso) {
+		escalonador.bloquearProcesso(nomeProcesso);
 	}
 
 	public void retomarProcesso(String nomeProcesso) {
+		escalonador.retomarProcesso(nomeProcesso);
 
 	}
 
