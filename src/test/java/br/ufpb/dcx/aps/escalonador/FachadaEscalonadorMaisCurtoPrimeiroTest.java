@@ -8,7 +8,7 @@ import org.junit.jupiter.api.*;
 public class FachadaEscalonadorMaisCurtoPrimeiroTest {
 	
 	private FachadaEscalonador fachada; 
-	
+	 
 	@BeforeEach 
 	public void inicializar() {
 		fachada = new FachadaEscalonador(TipoEscalonador.MaisCurtoPrimeiro);

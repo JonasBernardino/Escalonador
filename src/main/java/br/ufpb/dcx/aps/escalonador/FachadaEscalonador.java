@@ -4,29 +4,41 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FachadaEscalonador {
-	
+	TipoEscalonador tipo;
+
 	private Escalonador escalonador = new Escalonador();
 
 	public FachadaEscalonador(TipoEscalonador tipoEscalonador) {
 		if (tipoEscalonador == null) {
 			throw new EscalonadorException();
-		}
+		} 
+		
 		if (tipoEscalonador.equals(escalonador.escalonadorRoundRobin())) {
 			escalonador = new EscalonadorRoundRobin(tipoEscalonador);
-		} else if (tipoEscalonador.equals(escalonador.escalonadorPrioridade())) {
-			escalonador = new EscalonadorPrioridade(tipoEscalonador);
-		} else {
-			escalonador = new EscalonadorMaisCurtoPrimeiro(tipoEscalonador);
 		}
-	}
+		else if (tipoEscalonador.equals(escalonador.escalonadorPrioridade())) {
+			escalonador = new EscalonadorPrioridade(tipoEscalonador);
+		}
+		else { 
+			if(tipoEscalonador.equals(TipoEscalonador.MaisCurtoPrimeiro)) {
+			escalonador = new EscalonadorMaisCurtoPrimeiro(tipoEscalonador);}
+		
+			else {
+			escalonador = new EscalonadorFIFO(tipoEscalonador);
+		}
+	}}
 
 	public FachadaEscalonador(TipoEscalonador tipoEscalonador, int quantum) {
 		if (tipoEscalonador.equals(escalonador.escalonadorRoundRobin())) {
 			escalonador = new EscalonadorRoundRobin(quantum);
-		}else if (tipoEscalonador.equals(escalonador.escalonadorPrioridade())) {
+		} else if (tipoEscalonador.equals(escalonador.escalonadorPrioridade())) {
 			escalonador = new EscalonadorPrioridade(quantum);
 		} else {
+			if(tipoEscalonador.equals(TipoEscalonador.MaisCurtoPrimeiro)) {
 			escalonador = new EscalonadorMaisCurtoPrimeiro(0);
+			}else {
+				escalonador = new EscalonadorFIFO(quantum);
+			}
 		}
 	}
 
@@ -40,6 +52,7 @@ public class FachadaEscalonador {
 
 	public void adicionarProcesso(String nomeProcesso) {
 		escalonador.adicionarProcesso(nomeProcesso);
+		throw new EscalonadorException();
 
 	}
 
