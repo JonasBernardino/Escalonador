@@ -81,11 +81,11 @@ public class EscalonadorFIFO extends Escalonador {
 		if (duracao < 1) {
 			throw new EscalonadorException();
 		}
-		adicionarProcessoMCP(nomeProcesso, duracao);
+		adicionarProcessoFifo(nomeProcesso, duracao);
 
 	}
 
-	private void adicionarProcessoMCP(String nomeProcesso, int duracao) {
+	private void adicionarProcessoFifo(String nomeProcesso, int duracao) {
 		int maisCurto = Integer.MAX_VALUE;
 		if (lista.size() == 0) {
 			lista.add(nomeProcesso);
