@@ -17,7 +17,7 @@ public class StatusFifo {
 			return "Escalonador " + tipo + ";Processos: {Rodando: " + rodando + "};Quantum: " + quantum + ";Tick: "+ tick;
 		}
 		
-		public String statusProcessoRodandoFila(TipoEscalonador tipo, String rodando, Queue<String> processos, int quantum, int tick) {		
+		public String statusProcessoRodandoFila(TipoEscalonador tipo, String rodando, List<String> processos, int quantum, int tick) {		
 			return "Escalonador " + tipo + ";Processos: {Rodando: " + rodando + ", Fila: " + processos + "};Quantum: "+ quantum + ";Tick: " + tick;
 		}
 		
