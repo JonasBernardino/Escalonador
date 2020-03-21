@@ -302,8 +302,7 @@ public class Escalonador {
 	public TipoEscalonador escalonadorPrioridade() {
 		return TipoEscalonador.Prioridade;
 	}
-	
-	
+
 	public void adicionarProcessoTempoFixo(String string, int duracao) {
 
 	}

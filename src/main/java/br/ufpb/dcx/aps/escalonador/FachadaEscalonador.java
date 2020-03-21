@@ -52,7 +52,6 @@ public class FachadaEscalonador {
 
 	public void adicionarProcesso(String nomeProcesso) {
 		escalonador.adicionarProcesso(nomeProcesso);
-		throw new EscalonadorException();
 
 	}
 

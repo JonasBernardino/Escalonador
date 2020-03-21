@@ -1,24 +1,21 @@
 package br.ufpb.dcx.aps.escalonador;
-
 import java.util.ArrayList;
 import java.util.List;
 
-public class EscalonadorFIFO extends Escalonador {
-
-	StatusFifo sts = new StatusFifo();
+public class EscalonadorFIFO extends Escalonador{
+		
+	StatusFifo  sts = new StatusFifo();
 	private String processoRodando;
-	private int duracaoRodando;
-	private int duracaoFixa;
-
+	private int duracaoRodando ;
+	private int duracaoFixa ;
+	 
 	private int tick = 0;
 	private int quantum = 0;
 	private List<String> lista = new ArrayList<>();
 	private List<Integer> tempo = new ArrayList<>();
-
-	private List<String> processosNaFila = new ArrayList<>();
-
-	// Construtores
-	public EscalonadorFIFO() {
+	
+	//Construtores
+	public EscalonadorFIFO() {	
 	}
 
 	public EscalonadorFIFO(TipoEscalonador tipoEscalonador) {
@@ -28,7 +25,7 @@ public class EscalonadorFIFO extends Escalonador {
 	public EscalonadorFIFO(int quantum) {
 		super(TipoEscalonador.Fifo, quantum);
 	}
-	// Fim dos construtores
+	//Fim dos construtores
 
 	public String getStatus() {
 		if (processoRodando == null && lista.size() == 0) {
@@ -38,16 +35,19 @@ public class EscalonadorFIFO extends Escalonador {
 			return sts.statusFila(TipoEscalonador.Fifo, lista, quantum, tick);
 		}
 		if (tick > 0 && lista.size() == 0) {
-			return sts.statusRodando(TipoEscalonador.Fifo, processoRodando, quantum, tick);
+			return sts.statusRodando(TipoEscalonador.Fifo,processoRodando, quantum, tick);
 		}
-		return sts.statusProcessoRodandoFila(TipoEscalonador.Fifo, processoRodando, lista, quantum, tick);
+		return  sts.statusProcessoRodandoFila(TipoEscalonador.Fifo, processoRodando, lista, quantum, tick);
 	}
+		
+	
 
 	public void tick() {
-		tick++;
-		rodarPrimeiroProcessoFifo();
-		rodarNovoProcesso();
+		tick ++;
+		 rodarPrimeiroProcessoFifo();
+		 rodarNovoProcesso();
 	}
+	
 	private void rodarPrimeiroProcessoFifo() {
 		if (lista.size() > 0) {
 			if (processoRodando == null) {
@@ -86,7 +86,7 @@ public class EscalonadorFIFO extends Escalonador {
 	}
 
 	private void adicionarProcessoFifo(String nomeProcesso, int duracao) {
-		int maisCurto = Integer.MAX_VALUE;
+		int maisCurto = Integer.MIN_VALUE;
 		if (lista.size() == 0) {
 			lista.add(nomeProcesso);
 			tempo.add(duracao);
@@ -125,3 +125,4 @@ public class EscalonadorFIFO extends Escalonador {
 	}
 
 }
+

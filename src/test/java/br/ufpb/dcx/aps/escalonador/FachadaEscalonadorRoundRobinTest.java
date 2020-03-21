@@ -19,7 +19,7 @@ public class FachadaEscalonadorRoundRobinTest {
 	public void t01_statusAposCriacao() { 
 		checaStatus(fachada, TipoEscalonador.RoundRobin, 3, 0);
 	}
-
+ 
 	@Test  
 	public void t02_avancarTempo() {
 		fachada.tick();

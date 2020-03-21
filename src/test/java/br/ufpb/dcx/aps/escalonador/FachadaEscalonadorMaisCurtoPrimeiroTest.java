@@ -8,7 +8,7 @@ import org.junit.jupiter.api.*;
 public class FachadaEscalonadorMaisCurtoPrimeiroTest {
 	
 	private FachadaEscalonador fachada; 
-	 
+	
 	@BeforeEach 
 	public void inicializar() {
 		fachada = new FachadaEscalonador(TipoEscalonador.MaisCurtoPrimeiro);
@@ -176,7 +176,7 @@ public class FachadaEscalonadorMaisCurtoPrimeiroTest {
 		checaStatus(fachada, TipoEscalonador.MaisCurtoPrimeiro, 0, 11);
 	}
 	
-
+ 
 	@Test
 	public void t10_validacoes() {
 		fachada.adicionarProcessoTempoFixo("P", 1);

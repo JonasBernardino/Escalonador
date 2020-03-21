@@ -12,7 +12,7 @@ public class FachadaEscalonadorFifoTest {
 	@BeforeEach
 	public void inicializar() {
 		fachada = new FachadaEscalonador(TipoEscalonador.Fifo);
-	} 
+	}
 
     @Test 
 	public void t01_statusAposCriacao() {
@@ -36,7 +36,7 @@ public class FachadaEscalonadorFifoTest {
 		fachada.tick();
 		checaStatusRodando(fachada, TipoEscalonador.Fifo, 0, 2, "P1");
 		
-		//Acaba a duração do processo e libera a CPU  
+		//Acaba a duração do processo e libera a CPU 
 		fachada.tick();
 		checaStatus(fachada, TipoEscalonador.Fifo, 0, 3);
 	}
